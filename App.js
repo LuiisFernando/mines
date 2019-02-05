@@ -3,6 +3,8 @@ import { StyleSheet, Text, View, Alert} from 'react-native'
 
 import params from './src/params'
 import MineField from './src/components/MineField'
+import Header from './src/components/Header'
+import LevelSelection from './src/screens/LevelSelection'
 import { 
   createMinedBoard,
   cloneBoard, 
@@ -10,7 +12,8 @@ import {
   hadExplosion,
   ganhouJogo,
   exibeMinas,
-  invertFlag
+  invertFlag,
+  flagsUsadas
 } from './src/functions'
 
 export default class App extends Component {
@@ -34,7 +37,8 @@ export default class App extends Component {
     return {
       board: createMinedBoard(linhas, cols, this.quantidadeMinas()),
       ganhou: false,
-      perdeu: false
+      perdeu: false,
+      mostraLevelSelection: false
     }
   }
 
@@ -69,17 +73,27 @@ export default class App extends Component {
     this.setState({board, ganhou})
   }
 
+  onLevelSelected = level => {
+    params.dificultLevel = level;
+    this.setState(this.createState());
+  }
+
   render() {
     return (
       <View style={styles.container}>
       
-        <Text style={styles.welcome}>Iniciando o Mines !!</Text>
+        <LevelSelection 
+          isVisible={this.state.mostraLevelSelection} 
+          LevelSelected={this.onLevelSelected}
+          onCancel={() => this.setState({ mostraLevelSelection: false })} />
 
-        <Text style={styles.instructions}> Tamanho da grade:
-           {params.getQuantidadeLinhas()} x {params.getQuantidadeColuna()}</Text>
-    
+        <Header flagsFaltam={this.quantidadeMinas() - flagsUsadas(this.state.board)}
+        onNewGame={() => this.setState(this.createState())}
+        FlagPressed={() => this.setState({ mostraLevelSelection: true })}/>
+
         <View style={styles.board}>
-          <MineField board={this.state.board} OpenField={this.onOpenField}
+          <MineField board={this.state.board} 
+            OpenField={this.onOpenField}
             SelectField={this.onSelectField}/>
         </View>
             
@@ -98,3 +112,4 @@ const styles = StyleSheet.create({
     backgroundColor: '#AAA'
   }
 })
+

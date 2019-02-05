@@ -85,6 +85,8 @@ const abrirField = (board, row, column) => {
     }
 }
 
+const flagsUsadas = board => fields(board).filter(field => field.flagged).length
+
 const fields = board => [].concat(...board)
 const hadExplosion = board => fields(board).filter(field => field.exploded).length > 0
 const pendding = field => (field.mined && !field.flagged) || (!field.mined && !field.opened)
@@ -104,5 +106,6 @@ export {
     hadExplosion,
     ganhouJogo,
     exibeMinas,
-    invertFlag 
+    invertFlag,
+    flagsUsadas
 }
